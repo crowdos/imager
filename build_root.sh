@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$(id -u)" != "0" ]; then
+    echo "Script must be run as root"
+    exit 0
+fi
+
 if [ $# -ne 1 ]; then
 echo "Image file needed"
 exit 1
