@@ -7,12 +7,15 @@ if [ "$(id -u)" != "0" ]; then
     exit 0
 fi
 
-if [ $# -ne 1 ]; then
-echo "Image file needed"
+if [ $# -ne 2 ]; then
+echo "Usage $0 <Image file> <build profile>"
 exit 1
 fi
 
 IMG=$1
+PROFILE=$2
+
+. $PROFILE
 
 EXTRA_PACKAGES="netbase net-tools wget"
 
@@ -29,7 +32,7 @@ echo "========================="
 
 mount -t auto $IMG $DIR -oloop
 
-debootstrap --variant=minbase --include=sysvinit-core jessie $DIR
+debootstrap --variant=minbase --include=sysvinit-core --arch=$ARCH $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
