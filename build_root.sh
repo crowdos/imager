@@ -19,6 +19,21 @@ PROFILE=$2
 
 EXTRA_PACKAGES="netbase net-tools wget"
 
+DEBOOTSTRAP=debootstrap
+case `uname -m` in
+    i686|i586)
+	if [ "$ARCH" == "arm" ]; then
+	    DEBOOTSTRAP=qemu-debootstrap
+	fi
+	;;
+    armv7l)
+	;;
+    *)
+	echo "Unknown architecture"
+	exit 1
+	;;
+esac
+
 dd if=/dev/null of=$IMG bs=2M seek=1024
 echo -e "n\np\n\n\n\nw\n" | /sbin/fdisk $IMG
 /sbin/mkfs.ext4 -L root -F $IMG
@@ -32,7 +47,7 @@ echo "========================="
 
 mount -t auto $IMG $DIR -oloop
 
-debootstrap --variant=minbase --include=sysvinit-core --arch=$ARCH $DEBIAN_SUITE $DIR
+$DEBOOTSTRAP --variant=minbase --include=sysvinit-core --arch=$ARCH $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
