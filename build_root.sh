@@ -12,6 +12,8 @@ fi
 
 IMG=$1
 
+EXTRA_PACKAGES="netbase net-tools wget"
+
 dd if=/dev/null of=$IMG bs=2M seek=1024
 echo -e "n\np\n\n\n\nw\n" | /sbin/fdisk $IMG
 /sbin/mkfs.ext4 -L root -F $IMG
@@ -31,7 +33,7 @@ echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
 chroot $DIR apt-get update
 chroot $DIR dpkg -P systemd systemd-sysv
-chroot $DIR apt-get install netbase net-tools wget
+chroot $DIR apt-get install -y $EXTRA_PACKAGES
 chroot $DIR apt-get update
 
 rm -rf $DIR/etc/systemd
