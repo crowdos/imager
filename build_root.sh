@@ -35,6 +35,8 @@ case `uname -m` in
 	;;
 esac
 
+trap cleanup SIGINT
+
 create_temp_dir
 
 echo $DIR
