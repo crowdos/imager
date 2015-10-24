@@ -16,6 +16,7 @@ IMG=$1
 PROFILE=$2
 
 . $PROFILE
+. output/$OUTPUT_TYPE.sh
 
 EXTRA_PACKAGES="netbase net-tools wget"
 
@@ -34,18 +35,13 @@ case `uname -m` in
 	;;
 esac
 
-dd if=/dev/null of=$IMG bs=2M seek=1024
-echo -e "n\np\n\n\n\nw\n" | /sbin/fdisk $IMG
-/sbin/mkfs.ext4 -L root -F $IMG
-/sbin/tune2fs -c 0 -i 0 $IMG
+create_temp_dir
 
-DIR=$(mktemp -d)
+echo $DIR
 
 echo "========================="
-echo "Mount directory: $DIR"
+echo "Build directory: $DIR"
 echo "========================="
-
-mount -t auto $IMG $DIR -oloop
 
 $DEBOOTSTRAP --variant=minbase --include=sysvinit-core --arch=$ARCH $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
@@ -53,11 +49,11 @@ echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
 chroot $DIR apt-get update
 chroot $DIR dpkg -P systemd systemd-sysv
-chroot $DIR apt-get install -y $EXTRA_PACKAGES
-chroot $DIR apt-get update
+#chroot $DIR apt-get install -y $EXTRA_PACKAGES
+#chroot $DIR apt-get update
 
 rm -rf $DIR/etc/systemd
-umount $DIR
-rm -rf $DIR
 
-echo "Image created"
+create_output
+
+echo "Image created: $IMG"
