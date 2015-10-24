@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ "$(id -u)" != "0" ]; then
     echo "Script must be run as root"
     exit 0
