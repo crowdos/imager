@@ -19,7 +19,7 @@ PROFILE=$2
 . output/$OUTPUT_TYPE.sh
 
 EXTRA_PACKAGES="netbase net-tools wget"
-
+APT_OPTS="-y --no-install-recommends --no-install-suggests"
 DEBOOTSTRAP=debootstrap
 case `uname -m` in
     i686|i586)
@@ -35,7 +35,12 @@ case `uname -m` in
 	;;
 esac
 
-trap cleanup SIGINT EXIT
+function _cleanup() {
+    cleanup
+    umount $DIR/dev
+}
+
+trap _cleanup SIGINT EXIT
 
 create_temp_dir
 
@@ -49,13 +54,23 @@ $DEBOOTSTRAP --variant=minbase --include=sysvinit-core --arch=$ARCH $DEBIAN_SUIT
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
+
+mount --bind /dev/ $DIR/dev/
+
 chroot $DIR apt-get update
 chroot $DIR dpkg -P systemd systemd-sysv
-#chroot $DIR apt-get install -y $EXTRA_PACKAGES
+chroot $DIR apt-get install $APT_OPTS eatmydata
+
+install_bootloader
+
+chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES $KERNEL
+chroot $DIR apt-get clean
+chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1
+
 #chroot $DIR apt-get update
 
 rm -rf $DIR/etc/systemd
 
-create_output
+_cleanup
 
 echo "Image created: $IMG"
