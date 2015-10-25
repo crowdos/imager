@@ -35,7 +35,7 @@ case `uname -m` in
 	;;
 esac
 
-trap cleanup SIGINT
+trap cleanup SIGINT EXIT
 
 create_temp_dir
 
