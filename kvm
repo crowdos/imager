@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ $# -ne 1 ]; then
+    echo "Usage $0 <Image file>"
+    exit 1
+fi
+
+# -cpu to workaround this bug: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=775235
+kvm -vga std -cpu host -m 512M -serial telnet:localhost:3333,server,nowait -hda $1
