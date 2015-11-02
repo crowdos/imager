@@ -41,6 +41,6 @@ default CrowdOS
 label CrowdOS
       menu label CrowdOS
       kernel /vmlinuz
-      append initrd=/initrd.img root=/dev/sda1 ro quiet
+      append initrd=/initrd.img root=/dev/sda1 ro quiet video=400x600
 EOF
 }
