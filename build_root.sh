@@ -18,7 +18,8 @@ PROFILE=$2
 . $PROFILE
 . output/$OUTPUT_TYPE.sh
 
-EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES netbase net-tools wget"
+# TODO: remove dhcpcd5 later
+EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES netbase net-tools wget dhcpcd5"
 APT_OPTS="-y --no-install-recommends --no-install-suggests"
 DEBOOTSTRAP=debootstrap
 case `uname -m` in
