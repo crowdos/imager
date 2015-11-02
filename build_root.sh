@@ -18,7 +18,7 @@ PROFILE=$2
 . $PROFILE
 . output/$OUTPUT_TYPE.sh
 
-EXTRA_PACKAGES="netbase net-tools wget"
+EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES netbase net-tools wget"
 APT_OPTS="-y --no-install-recommends --no-install-suggests"
 DEBOOTSTRAP=debootstrap
 case `uname -m` in
