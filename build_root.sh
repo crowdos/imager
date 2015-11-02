@@ -50,7 +50,7 @@ echo "========================="
 echo "Build directory: $DIR"
 echo "========================="
 
-$DEBOOTSTRAP --variant=minbase --include=sysvinit-core --arch=$ARCH $DEBIAN_SUITE $DIR
+$DEBOOTSTRAP --variant=minbase --include=upstart --arch=$ARCH $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
