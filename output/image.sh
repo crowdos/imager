@@ -33,6 +33,7 @@ set -x
 mount -t proc proc proc
 mount -t sysfs sys sys
 /usr/bin/extlinux -i /boot/extlinux/
+dd if=/usr/lib/EXTLINUX/mbr.bin of=/dev/loop0 bs=440 count=1 conv=notrunc
 umount proc
 umount sys
 EOF
