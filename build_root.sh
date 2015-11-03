@@ -37,8 +37,8 @@ case `uname -m` in
 esac
 
 function _cleanup() {
-    cleanup
     umount $DIR/dev
+    cleanup
 }
 
 trap _cleanup SIGINT EXIT
