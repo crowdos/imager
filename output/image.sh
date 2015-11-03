@@ -2,7 +2,7 @@ OUTPUT_EXTRA_PACKAGES=e2fsprogs
 
 create_temp_dir() {
     dd if=/dev/null of=$IMG bs=2M seek=1024
-    echo -e "n\np\n\n\n\nw\n" | /sbin/fdisk $IMG
+    echo -e "n\np\n\n\n\na\nw\n" | /sbin/fdisk $IMG
     /sbin/losetup /dev/loop0 $IMG
     /sbin/kpartx -as /dev/loop0
     /sbin/mkfs.ext4 -F -L root /dev/mapper/loop0p1
