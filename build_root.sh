@@ -75,3 +75,5 @@ rm -rf $DIR/etc/systemd
 _cleanup
 
 echo "Image created: $IMG"
+
+trap - SIGINT EXIT
