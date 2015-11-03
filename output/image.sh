@@ -29,6 +29,7 @@ install_bootloader() {
     mkdir -p $DIR/boot/extlinux
     cat > $DIR/script <<EOF
 #!/bin/sh
+set -x
 mount -t proc proc proc
 mount -t sysfs sys sys
 /usr/bin/extlinux -i /boot/extlinux/
