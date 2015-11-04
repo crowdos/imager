@@ -19,8 +19,8 @@ PROFILE=$2
 . output/$OUTPUT_TYPE.sh
 
 # TODO: remove dhcpcd5 later
-EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES netbase net-tools wget dhcpcd5 upstart"
-APT_OPTS="-y --no-install-recommends --no-install-suggests --force-yes"
+EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES netbase net-tools wget dhcpcd5"
+APT_OPTS="-y --no-install-recommends --no-install-suggests"
 DEBOOTSTRAP=debootstrap
 case `uname -m` in
     i686|i586)
@@ -51,21 +51,20 @@ echo "========================="
 echo "Build directory: $DIR"
 echo "========================="
 
-$DEBOOTSTRAP --variant=minbase --arch=$ARCH $DEBIAN_SUITE $DIR
+$DEBOOTSTRAP --variant=minbase --include=upstart --arch=$ARCH $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
-echo "deb http://crowdos.foolab.org emulator main" >> $DIR/etc/apt/sources.list
 
 mount --bind /dev/ $DIR/dev/
 
 chroot $DIR apt-get update
-chroot $DIR apt-get install $APT_OPTS eatmydata
-chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES $KERNEL
 chroot $DIR dpkg -P systemd systemd-sysv
+chroot $DIR apt-get install $APT_OPTS eatmydata
 
 install_bootloader
 
+chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES $KERNEL
 chroot $DIR apt-get clean
 chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1
 
