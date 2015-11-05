@@ -6,4 +6,9 @@ if [ $# -ne 1 ]; then
 fi
 
 # -cpu to workaround this bug: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=775235
-kvm -soundhw es1370 -vga qxl -cpu host -m 512M -serial telnet:localhost:3333,server,nowait -hda $1
+kvm -soundhw es1370 \
+    -vga qxl \
+    -cpu host \
+    -m 512M \
+    -serial telnet:localhost:3333,server,nowait \
+    -hda $1
