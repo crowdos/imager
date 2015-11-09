@@ -20,7 +20,7 @@ PROFILE=$2
 
 # TODO: remove dhcpcd5 later
 EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES crowdos-base net-tools wget dhcpcd5"
-APT_OPTS="-y --no-install-recommends --no-install-suggests"
+APT_OPTS="-y --no-install-recommends --no-install-suggests --force-yes"
 DEBOOTSTRAP=debootstrap
 case `uname -m` in
     i686|i586)
@@ -61,6 +61,10 @@ mount --bind /dev/ $DIR/dev/
 
 chroot $DIR apt-get update
 chroot $DIR apt-get install $APT_OPTS eatmydata
+
+# init is essential so we must force it.
+chroot $DIR dpkg --force-all -P init
+
 chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES
 
 install_bootloader
