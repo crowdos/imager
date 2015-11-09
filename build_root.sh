@@ -59,14 +59,13 @@ echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/source
 mount --bind /dev/ $DIR/dev/
 
 chroot $DIR apt-get update
-chroot $DIR dpkg -P systemd systemd-sysv
 chroot $DIR apt-get install $APT_OPTS eatmydata
+chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES
 
 install_bootloader
 
-chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES
 chroot $DIR apt-get clean
-chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1
+chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1 systemd systemd-sysv
 
 #chroot $DIR apt-get update
 
