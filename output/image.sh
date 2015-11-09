@@ -13,7 +13,7 @@ create_temp_dir() {
 
 cleanup() {
     mount | grep -q $DIR || return
-    umount $DIR
+    mountpoint $DIR && umount $DIR
     /sbin/kpartx -ds /dev/loop0
     /sbin/losetup -d /dev/loop0
     rm -rf $DIR

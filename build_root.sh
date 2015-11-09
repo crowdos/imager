@@ -37,7 +37,7 @@ case `uname -m` in
 esac
 
 function _cleanup() {
-    umount $DIR/dev
+    mountpoint $DIR/dev && umount $DIR/dev
     cleanup
 }
 
