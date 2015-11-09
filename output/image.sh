@@ -24,8 +24,6 @@ install_bootloader() {
     echo "Installing bootloader"
     echo "====================="
 
-    chroot $DIR eatmydata apt-get install $APT_OPTS $BOOTLOADER
-
     mkdir -p $DIR/boot/extlinux
     cat > $DIR/script <<EOF
 #!/bin/sh
@@ -40,11 +38,4 @@ EOF
     chmod +x $DIR/script
     chroot $DIR /script
     rm -rf $DIR/script
-    cat > $DIR/boot/extlinux/extlinux.conf <<EOF
-default CrowdOS
-label CrowdOS
-      menu label CrowdOS
-      kernel /vmlinuz
-      append initrd=/initrd.img root=/dev/sda1 ro quiet video=400x600
-EOF
 }

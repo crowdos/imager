@@ -19,7 +19,7 @@ PROFILE=$2
 . output/$OUTPUT_TYPE.sh
 
 # TODO: remove dhcpcd5 later
-EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES netbase net-tools wget dhcpcd5"
+EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES crowdos-base net-tools wget dhcpcd5"
 APT_OPTS="-y --no-install-recommends --no-install-suggests"
 DEBOOTSTRAP=debootstrap
 case `uname -m` in
@@ -64,7 +64,7 @@ chroot $DIR apt-get install $APT_OPTS eatmydata
 
 install_bootloader
 
-chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES $KERNEL
+chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES
 chroot $DIR apt-get clean
 chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1
 
