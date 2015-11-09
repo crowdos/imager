@@ -55,6 +55,7 @@ $DEBOOTSTRAP --variant=minbase --arch=$ARCH $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "LABEL=root / auto defaults 0 1" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
+echo "deb http://crowdos.foolab.org emulator main" >> $DIR/etc/apt/sources.list
 
 mount --bind /dev/ $DIR/dev/
 
