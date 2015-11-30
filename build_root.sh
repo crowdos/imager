@@ -8,8 +8,8 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 if [ $# -ne 2 ]; then
-echo "Usage $0 <Image file> <build profile>"
-exit 1
+    echo "Usage $0 <Image file> <build profile>"
+    exit 1
 fi
 
 IMG=$1
