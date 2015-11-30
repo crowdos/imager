@@ -8,11 +8,11 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 if [ $# -ne 2 ]; then
-    echo "Usage $0 <Image file> <build profile>"
+    echo "Usage $0 <output file> <build profile>"
     exit 1
 fi
 
-IMG=$1
+OUTPUT=$1
 PROFILE=$2
 
 . $PROFILE
@@ -36,22 +36,26 @@ case `uname -m` in
 	;;
 esac
 
-function _cleanup() {
+function cleanup() {
     mountpoint -q $DIR/dev && umount $DIR/dev
-    cleanup
+    rm -rf $DIR
 }
 
-trap _cleanup SIGINT EXIT
+trap cleanup SIGINT EXIT
 
-create_temp_dir
+DIR=$(mktemp -d)
 
-echo $DIR
+if [ ! -f $DEBIAN_SUITE.tgz ]; then
+    echo "Generating debootstrap cache tarball"
+    $DEBOOTSTRAP --variant=minbase --arch=$ARCH --make-tarball=$DEBIAN_SUITE.tgz $DEBIAN_SUITE $DIR
+    DIR=$(mktemp -d)
+fi
 
 echo "========================="
 echo "Build directory: $DIR"
 echo "========================="
 
-$DEBOOTSTRAP --variant=minbase --arch=$ARCH $DEBIAN_SUITE $DIR
+$DEBOOTSTRAP --variant=minbase --arch=$ARCH --unpack-tarball=`pwd`/$DEBIAN_SUITE.tgz $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
@@ -67,17 +71,15 @@ chroot $DIR dpkg --force-all -P init
 
 chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES
 
-install_bootloader
-
 chroot $DIR apt-get clean
 chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1 systemd systemd-sysv
 
-#chroot $DIR apt-get update
-
 rm -rf $DIR/etc/systemd
 
-_cleanup
-
-echo "Image created: $IMG"
+prepare_output
 
 trap - SIGINT EXIT
+
+cleanup
+
+echo "Image created: $OUTPUT"
