@@ -43,11 +43,13 @@ function cleanup() {
 
 trap cleanup SIGINT EXIT
 
+CACHE_TARBALL=$DEBIAN_SUITE-$ARCH.tgz
+
 DIR=$(mktemp -d)
 
-if [ ! -f $DEBIAN_SUITE.tgz ]; then
+if [ ! -f $CACHE_TARBALL ]; then
     echo "Generating debootstrap cache tarball"
-    $DEBOOTSTRAP --variant=minbase --arch=$ARCH --make-tarball=$DEBIAN_SUITE.tgz $DEBIAN_SUITE $DIR
+    $DEBOOTSTRAP --variant=minbase --arch=$ARCH --make-tarball=$CACHE_TARBALL $DEBIAN_SUITE $DIR
     DIR=$(mktemp -d)
 fi
 
@@ -55,7 +57,7 @@ echo "========================="
 echo "Build directory: $DIR"
 echo "========================="
 
-$DEBOOTSTRAP --variant=minbase --arch=$ARCH --unpack-tarball=`pwd`/$DEBIAN_SUITE.tgz $DEBIAN_SUITE $DIR
+$DEBOOTSTRAP --variant=minbase --arch=$ARCH --unpack-tarball=`pwd`/$CACHE_TARBALL $DEBIAN_SUITE $DIR
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
