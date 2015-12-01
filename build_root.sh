@@ -32,6 +32,10 @@ fi
 
 function cleanup() {
     mountpoint -q $DIR/dev && umount $DIR/dev
+    if [ -f $DIR/debootstrap/debootstrap.log ]; then
+	cat $DIR/debootstrap/debootstrap.log
+    fi
+
     rm -rf $DIR
 }
 
