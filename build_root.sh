@@ -59,7 +59,7 @@ $DEBOOTSTRAP --variant=minbase --arch=$ARCH --unpack-tarball=`pwd`/$CACHE_TARBAL
 echo "proc /proc proc defaults 0 0" >> $DIR/etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> $DIR/etc/fstab
 echo "deb http://security.debian.org jessie/updates main" >> $DIR/etc/apt/sources.list
-echo "deb http://crowdos.foolab.org emulator main" >> $DIR/etc/apt/sources.list
+echo "deb http://crowdos.foolab.org scratch main $EXTRA_REPO_COMPONENT" >> $DIR/etc/apt/sources.list
 
 mount --bind /dev/ $DIR/dev/
 
