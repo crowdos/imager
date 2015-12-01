@@ -21,20 +21,14 @@ PROFILE=$2
 # TODO: remove dhcpcd5 later
 EXTRA_PACKAGES="$OUTPUT_EXTRA_PACKAGES crowdos-base net-tools wget dhcpcd5"
 APT_OPTS="-y --no-install-recommends --no-install-suggests --force-yes"
-DEBOOTSTRAP=debootstrap
-case `uname -m` in
-    i686|i586)
-	if [ "$ARCH" == "arm" ]; then
-	    DEBOOTSTRAP=qemu-debootstrap
-	fi
-	;;
-    armv7l)
-	;;
-    *)
-	echo "Unknown architecture"
-	exit 1
-	;;
-esac
+
+HOST_ARCH=$(uname -m)
+
+if [ "$HOST_ARCH" != "$ARCH" ]; then
+    DEBOOTSTRAP=qemu-debootstrap
+else
+    DEBOOTSTRAP=debootstrap
+fi
 
 function cleanup() {
     mountpoint -q $DIR/dev && umount $DIR/dev
