@@ -70,7 +70,13 @@ chroot $DIR apt-get install $APT_OPTS eatmydata
 # init is essential so we must force it.
 chroot $DIR dpkg --force-all -P init
 
+# This is needed to prevent for grub-pc from being auto-configured
+echo '#!/bin/sh' > $DIR/bin/running-in-container
+chmod +x $DIR/bin/running-in-container
+
 chroot $DIR eatmydata apt-get install $APT_OPTS $EXTRA_PACKAGES
+
+rm -rf $DIR/bin/running-in-container
 
 chroot $DIR apt-get clean
 chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1 systemd systemd-sysv

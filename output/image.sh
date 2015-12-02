@@ -5,20 +5,37 @@ install_bootloader() {
     echo "Installing bootloader"
     echo "====================="
 
-    mkdir -p $MNT_DIR/boot/extlinux
+    UUID=$(blkid -o value -s UUID  /dev/mapper/loop0p1)
+    PARTUUID=$(blkid -o value -s PARTUUID  /dev/mapper/loop0p1)
+    # We must use PARTUUID
+    # http://unix.stackexchange.com/a/93777
+    cat <<EOF >> $MNT_DIR/etc/grub.d/40_custom
+menuentry "CrowdOS" {
+        insmod part_msdos
+        insmod ext2
+        set root=(hd0,msdos1)
+        search --no-floppy --fs-uuid --set=root $UUID
+        linux /boot/vmlinuz ro quiet root=PARTUUID=$PARTUUID video=400x600 init=/sbin/runit-init
+}
+EOF
     cat > $MNT_DIR/script <<EOF
 #!/bin/sh
 set -x
-mount -t proc proc proc
-mount -t sysfs sys sys
-/usr/bin/extlinux -i /boot/extlinux/
-dd if=/usr/lib/EXTLINUX/mbr.bin of=/dev/loop0 bs=440 count=1 conv=notrunc
-umount proc
-umount sys
+sed -ie 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=0/' /etc/default/grub
+grub-install /dev/loop0
+update-grub
 EOF
+    for i in dev proc sys; do
+	mount --bind /$i $MNT_DIR/$i
+    done
+
     chmod +x $MNT_DIR/script
     chroot $MNT_DIR /script
     rm -rf $MNT_DIR/script
+
+    for i in dev proc sys; do
+	umount $MNT_DIR/$i
+    done
 }
 
 prepare_output() {
