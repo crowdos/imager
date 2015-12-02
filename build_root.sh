@@ -83,6 +83,8 @@ chroot $DIR apt-get --purge -y remove eatmydata libeatmydata1 systemd systemd-sy
 
 rm -rf $DIR/etc/systemd
 
+umount $DIR/dev/
+
 prepare_output
 
 trap - SIGINT EXIT
